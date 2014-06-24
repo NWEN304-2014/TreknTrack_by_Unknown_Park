@@ -93,6 +93,7 @@ function isIOS() {
 
 	var photoURI;
     var options;
+	var captureFlag;
     // Cordova is ready to be used!
     //
     function onDeviceReady() {
@@ -107,6 +108,7 @@ function isIOS() {
 			saveToPhotoAlbum: true };
 
 		photoURI = null;
+		captureFlag = false;
 	//capturePhoto();
 
     }
@@ -279,6 +281,7 @@ function isIOS() {
     function onTakePhotoSuccess(imageURI) {
 		// alert('GET!! '+imageURI);
 		photoURI = imageURI;
+		captureFlag = true;
      
 		//display photo
 		$('#imgContainer').show();
@@ -296,6 +299,7 @@ function isIOS() {
 		var deferred = new $.Deferred();
 		// alert('Get!!! '+imageURI);
 		photoURI = imageURI;
+		captureFlag = false;
 
 		var shared = getShared(imageURI);
 		var lastmoddate = getLastModDate(imageURI);
@@ -645,6 +649,13 @@ function isIOS() {
 					//alert('sharing finished');
 					//upload to server
 					//uploadPhoto();
+					if(captureFlag == true){
+						// viewSharedPhoto(true);
+						captureFlag = false;
+						$('camera2.html').bind('beforeunload',viewSharedPhoto);
+						alert('changing page to view map');
+						$.mobile.changePage('mymap.html');
+					}
 				}
 				else{
 					alert('share failed, no coords found');

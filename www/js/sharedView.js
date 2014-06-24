@@ -5,6 +5,7 @@ function viewSharedPhoto(){
 		  watcher = false;
 		  markerYou.setMap(null);
 		  alert('watcher cleared');
+		  map.setCenter(markerYou.getPosition());
 		  placePhotos().then(function(){
 		  	markerYou.setMap(map);
 			alert('place photos done, continue watching');

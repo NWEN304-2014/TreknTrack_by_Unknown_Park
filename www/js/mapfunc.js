@@ -99,8 +99,8 @@ function loadMap()
 }
 $("#view_sharedPhoto").live('click', function(){
 
-placePhotos();
-	// viewSharedPhoto();
+// placePhotos();
+	viewSharedPhoto();
   // function viewSharedPhoto(){
 	// if(gpsEnabled == true){
 		// alert('view shared photo');
@@ -112,7 +112,7 @@ placePhotos();
 		  	// markerYou.setMap(map);
 			// alert('place photos done, continue watching');
 			// watcher = navigator.geolocation.watchPosition(function(newPosition) {
-					// // Each time a new location is registered, move the marker.
+					// Each time a new location is registered, move the marker.
 					// myLocation = new google.maps.LatLng(newPosition.coords.latitude,newPosition.coords.longitude);
 					// markerYou.setPosition(myLocation);
 			// }, function() {}, {enableHighAccuracy:true, maximumAge:30000, timeout:27000});
@@ -221,6 +221,9 @@ placePhotos();
 			}
 			
 			AutoCenter(markers);
+			if(gpsEnabled==false && markers.length>0){
+				map.setCenter(markers[0].getPosition());
+			}
 			deferred.resolve();
 		}
 		else{
@@ -236,7 +239,7 @@ function AutoCenter(markers) {
   var bounds = new google.maps.LatLngBounds();
   //  Go through each...
   $.each(markers, function (index, marker) {
-	bounds.extend(marker.position);
+	bounds.extend(marker.getPosition());
   });
   //alert('s2');
   //  Fit these bounds to the map
