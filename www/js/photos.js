@@ -145,9 +145,9 @@ function getLastModDate(imageURI){
 			// alert('in save entrylastmod type '+typeof(lastmoddate));
 			// alert('in file entrylastmod '+lastmoddate);
 			// alert('in file '+imageURI);
-			for(var key in f){
-				if(f.hasOwnProperty(key)){alert(key+', '+f[key]);}
-			}
+			// for(var key in f){
+				// if(f.hasOwnProperty(key)){alert(key+', '+f[key]);}
+			// }
 			deferred.resolve(lastmoddate);
 		},function(){alert('resolve URI failed'); deferred.resolve('');});
 	});
@@ -168,7 +168,7 @@ function getLocalStorageObj(str){
 		deferred.resolve(obj);
 	}
 	else{
-	 alert('local not exists');
+	 // alert('local not exists');
 		obj = {};
 		deferred.resolve(obj);
 	}
@@ -188,10 +188,10 @@ function savePhotoData(imageURI,shared){
 	//wait for geolocation to finish
 
 	$.when(photos,lastmoddate,pos).done(function (photos,lastmoddate,pos){
-		alert('something1');
-		alert('last '+lastmoddate);
+		// alert('something1');
+		// alert('last '+lastmoddate);
 
-		alert('poss '+pos);
+		// alert('poss '+pos);
 		//make new one
 		photos[imageURI] = {};
 

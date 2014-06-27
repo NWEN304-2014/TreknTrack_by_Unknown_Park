@@ -267,7 +267,7 @@ function viewSharedPhoto(){
 			}
 			
 			AutoCenter(markers);
-			alert(gpsEnabled+' '+markers.length);
+			// alert(gpsEnabled+' '+markers.length);
 			if((gpsEnabled==null || gpsEnabled==false) && markers.length>0){
 			// alert('gps');
 				map.setCenter(markers[0].getPosition());
