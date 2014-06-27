@@ -30,25 +30,31 @@ var t = window.localStorage.getItem("tracks");
     t = {dummy:dummy_data};
   }
   window.localStorage.setItem("tracks",JSON.stringify(t));
-  
+  window.localStorage.setItem("sharedPhotos",null);
   var s = window.localStorage.getItem("sharedPhotos");
-  var photodummy = { URI:'../images/IMG_0052.jpg',
+ var photo1 = "images/photo1.jpg";
+  var photo2 = "images/photo2.jpg";
+  var photo3 = "images/photo3.jpg";
+  // var filename = fullPath.replace(/^.*[\\\/]/, '');
+  var photodummy = { URI:photo1,
 					 coords: {longitude:174.790464,latitude:-41.295845},
 					 shared: true,
 					 };
-var photodummy2 = { URI:'../images/IMG_0061.jpg',
+var photodummy2 = { URI:photo2,
 					 coords: {longitude:174.790474,latitude:-41.294285},
 
 					 shared: true,
 					 };
- var photodummy3 = { URI:'../images/IMG_0067.jpg',
+ var photodummy3 = { URI:photo3,
 					 coords: {longitude:174.791099,latitude:-41.294073},
 
 
 					 shared: true,
 					 };
-  if(s!='' && s!=null){
+  
+  
     s = JSON.parse(s);
+	if(s!=null && s!='' ){
     s[photodummy.URI] = photodummy;
 	s[photodummy2.URI] = photodummy2;
 	s[photodummy3.URI] = photodummy3;

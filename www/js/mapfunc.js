@@ -1,4 +1,30 @@
 
+var gpsEnabled;
+var map;
+var watcher;
+var markerYou;
+var infowindowYou;
+var myLocation;
+var checkConnection = true;
+
+document.addEventListener("deviceready",onDeviceReady,false);
+function onDeviceReady(){
+	if(navigator.network.connection.type == Connection.NONE){
+	// alert('no connection');
+		checkConnection = false;
+	}
+}
+
+$(document).on('pageinit', function(){
+	if(checkConnection == true){
+	// alert('showing');
+		loadMap();
+	}
+	else{
+		alert('No Network Connection. Map not displayed.');
+	}  
+});
+
 ///////////////////////////////////////////
 // current location GPS display code from:
 //https://github.com/tkompare/projects/tree/master/stalker
@@ -8,12 +34,7 @@
 //Email: tom@kompare.us
 //
 ///////////////////////////////////////////
-var gpsEnabled;
-var map;
-var watcher;
-var markerYou;
-var infowindowYou;
-var myLocation;
+
 function loadMap()
 {
 	var browserSupportFlag =  new Boolean();
@@ -100,27 +121,44 @@ function loadMap()
 $("#view_sharedPhoto").live('click', function(){
 
 // placePhotos();
-	viewSharedPhoto();
-  // function viewSharedPhoto(){
-	// if(gpsEnabled == true){
-		// alert('view shared photo');
-		  // navigator.geolocation.clearWatch(watcher);
-		  // watcher = false;
-		  // markerYou.setMap(null);
-		  // alert('watcher cleared');
-		  // placePhotos().then(function(){
-		  	// markerYou.setMap(map);
-			// alert('place photos done, continue watching');
-			// watcher = navigator.geolocation.watchPosition(function(newPosition) {
-					// Each time a new location is registered, move the marker.
-					// myLocation = new google.maps.LatLng(newPosition.coords.latitude,newPosition.coords.longitude);
-					// markerYou.setPosition(myLocation);
-			// }, function() {}, {enableHighAccuracy:true, maximumAge:30000, timeout:27000});
-		
-		 // });
-	// }
-// }
+	
+	if(checkConnection == true){
+		viewSharedPhoto();
+	}
+	else{
+		alert('No Network Connection. Cannot view shared photos.');
+	}
+  
 });
+
+function viewSharedPhoto(){
+// alert('view2');
+	if(gpsEnabled == true){
+		// alert('view shared photo');
+		  navigator.geolocation.clearWatch(watcher);
+		  watcher = false;
+		  markerYou.setMap(null);
+		  // alert('watcher cleared');
+		  map.setCenter(markerYou.getPosition());
+		  placePhotos().then(function(){
+		  	markerYou.setMap(map);
+			// alert('place photos done, continue watching');
+			watcher = navigator.geolocation.watchPosition(function(newPosition) {
+					// Each time a new location is registered, move the marker.
+					myLocation = new google.maps.LatLng(newPosition.coords.latitude,newPosition.coords.longitude);
+					markerYou.setPosition(myLocation);
+			}, function() {}, {enableHighAccuracy:true, maximumAge:30000, timeout:27000});
+			// Listen for the map page to be closed and stop listenting to the user's device GPS
+			$(document).live('pagebeforehide', function(event,ui){
+				navigator.geolocation.clearWatch(watcher);
+				watcher = false;
+			});
+		 });
+	}
+	else{
+		placePhotos();
+	}
+}
  ////////////////////////////////////////////////////////
  // Marker + photo overlays code template from:
  // http://chrisltd.com/blog/2013/08/google-map-random-color-pins/
@@ -148,14 +186,65 @@ $("#view_sharedPhoto").live('click', function(){
 					 // shared: true,
 					 // };
 		var sharedPhotos = window.localStorage.getItem("sharedPhotos");
-		if(sharedPhotos!=null && sharedPhotos!=''){
-			//alert('get saved data');
-			sharedPhotos = JSON.parse(sharedPhotos);
-			//alert('infowindow');
+		sharedPhotos = JSON.parse(sharedPhotos);
+		
+		function addMarker(contentStr,icon,coords,pURI, markers){
+			var marker = new google.maps.Marker({
+				position: new google.maps.LatLng(coords.latitude, coords.longitude),
+				map: map,
+				icon: icon,
+			});
+			marker.pURI = pURI;
+			// alert(marker.pURI+' '+pURI);
 			var infowindow = new google.maps.InfoWindow({
 				maxWidth: 150
 			});
-			var marker;
+			infowindow.setContent(contentStr[0]);
+			
+			var removebtn = contentStr.find('button.un-Share')[0];
+			google.maps.event.addDomListener(removebtn,'click',function(event){
+				// alert('alert dom');
+				remove_marker(marker);
+			});
+			google.maps.event.addListener(marker,'click',function(){
+				map.setZoom(15);
+				infowindow.open(map,marker);
+			});
+			google.maps.event.addListener(map,'click',function(){
+				infowindow.close();
+			});
+			markers.push(marker);
+		}
+		function remove_marker(marker){
+			// alert('removing1');
+			
+		// alert(marker+' '+marker.pURI+' '+sharedPhotos);
+			var photos = window.localStorage.getItem("photos");
+
+			photos = JSON.parse(photos);
+			if(photos==null){
+			
+				photos = {};
+				alert(photos);
+			}
+			// alert(sharedPhotos[pURI]+' '+photos[pURI]);
+			if(sharedPhotos!=null && sharedPhotos !=''){
+				if(sharedPhotos[marker.pURI]!=null && sharedPhotos[marker.pURI]!=''){
+				// alert('removing');
+					delete sharedPhotos[marker.pURI];
+					if(photos[marker.pURI]!=null&& photos[marker.pURI]!='' ){
+						photos[marker.pURI].shared = false;
+						window.localStorage.setItem("photos",JSON.stringify(photos));
+					}
+					window.localStorage.setItem("sharedPhotos",JSON.stringify(sharedPhotos));
+					marker.setMap(null);
+					// AutoCenter(markers);
+				}
+			}
+			
+		}
+		if(sharedPhotos!=null && sharedPhotos!=''){
+			
 			var markers = new Array();
 			var iconCounter = 0;
 			
@@ -163,55 +252,12 @@ $("#view_sharedPhoto").live('click', function(){
 				if(sharedPhotos.hasOwnProperty(p)){
 					//alert('in loop p: '+sharedPhotos[p].URI);
 					//alert(JSON.stringify(sharedPhotos[p].coords));
-					var contentStr = '<div style="width:100%;"><img style="width:100%;"'+ 
-										'src="'+sharedPhotos[p].URI+'"/><br>by '+ p+'<br>'+
+					var contentStr = $('<div style="width:100%;"><img style="width:100%;"'+
+										' src="'+sharedPhotos[p].URI+'" crossOrigin="anonymous" '+
+										'><br>by '+ p+'<br>'+
 										'<button name="un-Share" id="un-Share" class="un-Share" >'+
-										'UnShare</button> </div>';
-					marker = new google.maps.Marker({
-						position: new google.maps.LatLng(sharedPhotos[p].coords.latitude, sharedPhotos[p].coords.longitude),
-						map: map,
-						icon: icons[iconCounter],
-					});
-					//alert(marker);
-					markers.push(marker);
-					//alert('markers pushed');
-					
-					
-					google.maps.event.addListener(marker,'click', (function(marker,c) {
-						return function(){
-						//alert('setcontent');
-							infowindow.setContent(c);
-							infowindow.open(map,marker);
-						};
-					})(marker,contentStr));
-					
-					var rmbtn = $(contentStr.match('un-Share')[0]);
-					google.maps.event.addDomListener(rmbtn,'click',(function(marker,pURI,sharedPhotos,markers){
-						return function(){
-						//alert('removing1');
-						//alert(marker+' '+pURI+' '+sharedPhotos);
-							var photos = window.localStorage.getItem("photos");
-							if(photos!=null &&photos!=''){
-							//alert(photos);
-								photos = JSON.parse(photos);
-								//alert(photos);
-							}
-							//alert(sharedPhotos[pURI]+' '+photos[pURI]);
-							if(sharedPhotos[pURI]!=null && sharedPhotos[pURI]!=''){
-							//alert('removing');
-								delete sharedPhotos[pURI];
-								if(photos[pURI]!=null&& photos[pURI]!='' ){
-									photos[pURI].shared = false;
-									window.localStorage.setItem("photos",JSON.stringify(photos));
-								}
-								window.localStorage.setItem("sharedPhotos",JSON.stringify(sharedPhotos));
-								marker.setMap(null);
-								AutoCenter(markers);
-							}
-						}
-					})(marker,sharedPhotos[p].URI,sharedPhotos,markers));
-					
-					//alert('s1');
+										'UnShare</button> </div>');
+					addMarker(contentStr,icons[iconCounter],sharedPhotos[p].coords,sharedPhotos[p].URI,markers);
 					iconCounter++;
 					if(iconCounter >=icons_length){
 						iconCounter = 0;
@@ -221,7 +267,9 @@ $("#view_sharedPhoto").live('click', function(){
 			}
 			
 			AutoCenter(markers);
-			if(gpsEnabled==false && markers.length>0){
+			alert(gpsEnabled+' '+markers.length);
+			if((gpsEnabled==null || gpsEnabled==false) && markers.length>0){
+			// alert('gps');
 				map.setCenter(markers[0].getPosition());
 			}
 			deferred.resolve();

@@ -1,4 +1,4 @@
-// Login Form
+// // Login Form
 
 $(function() {
     var button = $('#loginButton');
@@ -6,14 +6,22 @@ $(function() {
     var form = $('#loginForm');
     button.removeAttr('href');
     button.mouseup(function(login) {
+	// alert('in login func');
         box.toggle();
         button.toggleClass('active');
     });
     form.mouseup(function() { 
+		// alert('form mouseup');
         return false;
     });
     $(this).mouseup(function(login) {
+	// for(var key in login){
+		// if(login.hasOwnProperty(key)){
+			// alert(key+' '+login[key]);
+		// }
+	// }
         if(!($(login.target).parent('#loginButton').length > 0)) {
+		// alert(JSON.stringify(login.target));
             button.removeClass('active');
             box.hide();
         }

@@ -25,6 +25,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		<script type="text/javascript" src="js/jquery.mobile-1.4.2.js"></script>
 	
 		<script src="js/login.js"></script>
+		<script src="js/account.js"></script>
 	
 		<link type="text/css" rel="stylesheet" href="css/jquery.mmenu.all.css" />
 		<script type="text/javascript" src="js/jquery.mmenu.js"></script>
@@ -96,15 +97,21 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 
 
 							<a href="#popupLogin" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-check ui-btn-icon-left ui-btn-a" data-transition="pop" style="left:10px;">Sign in</a>
-<div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all">
-    <form>
+<div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all" data-ajax="false">
+    <form id="signupForm" >
         <div style="padding:10px 20px;">
             <h3>Please sign in</h3>
-            <label for="un" class="ui-hidden-accessible">Trekker Name</label>
-            <input type="text" name="user" id="un" value="" placeholder="username" data-theme="a">
-            <label for="pw" class="ui-hidden-accessible">Password</label>
-            <input type="password" name="pass" id="pw" value="" placeholder="password" data-theme="a">
-            <button type="submit" class="ui-btn ui-corner-all ui-shadow ui-btn-e ui-btn-icon-left ui-icon-check">Sign in</button>
+            
+            
+            
+			
+				<label for="username1" class="ui-hidden-accessible">Trekker Name</label>
+            <input type="text" name="username" id="username1" value="" placeholder="username" data-theme="a">
+				<label for="password1" class="ui-hidden-accessible">Password</label>
+            <input type="password" name="password" id="password1" value="" placeholder="password" data-theme="a">
+				<button type="submit" class="ui-btn ui-corner-all ui-shadow ui-btn-e ui-btn-icon-left ui-icon-check" id="submitSignin">Sign in</button>
+				<a href="signup.html" ><input type="button" value="Sign Up"></a>
+		
         </div>
     </form>
 </div>

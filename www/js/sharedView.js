@@ -1,4 +1,5 @@
 function viewSharedPhoto(){
+// alert('view2');
 	if(gpsEnabled == true){
 		alert('view shared photo');
 		  navigator.geolocation.clearWatch(watcher);
@@ -20,5 +21,8 @@ function viewSharedPhoto(){
 				watcher = false;
 			});
 		 });
+	}
+	else{
+		placePhotos();
 	}
 }

@@ -157,10 +157,12 @@ width:100%;
 		</div>
 		<br>
 		<div class="login">
-				<input type="text" placeholder="username" name="user"><br>
-				<input type="password" placeholder="password" name="password"><br>
-				<a href = "index.html" rel="external"><input type="button" value="Login"></a>
-				<input type="button" value="Sign Up">
+		<form method="post" id="signinForm" data-ajax="false">
+				<input type="text" placeholder="username" name="username" id="username"><br>
+				<input type="password" placeholder="password" name="password" id="password"><br>
+				<input type="submit" name="" value="Submit Form" id="submitSignin" />
+				<a href="signup.html" ><input type="button" value="Sign Up"></a>
+		</form>			
 		</div>
 
   <script src='http://codepen.io/assets/libs/fullpage/jquery.js'></script>
